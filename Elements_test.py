@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 
-# Constants for test data
+
 FULL_NAME = "Barel"
 EMAIL = "barel@gmail.com"
 CURRENT_ADDRESS = "Jerusalem"
@@ -22,31 +22,37 @@ def driver():
     driver.quit()
 
 
-def test_text_box(driver):
+def website_main_page(driver):
     driver.get("https://demoqa.com/")
-    print("Navigated to the demo site.")
-
-    element_button = driver.find_element(By.XPATH, "//div[@class='card-body']/h5[text()='Elements']")
+    element_button = driver.find_element(
+        By.XPATH, "//div[@class='card-body']/h5[text()='Elements']")
     element_button.click()
 
-    text_box_button = driver.find_element(By.XPATH, "//span[normalize-space() = 'Text Box']")
+
+def test_text_box(driver):
+    website_main_page(driver)
+    
+    text_box_button = driver.find_element(
+        By.XPATH, "//span[normalize-space() = 'Text Box']")
     text_box_button.click()
 
-    full_name_text_box = driver.find_element(By.XPATH, "//input[@id='userName']")
+    full_name_text_box = driver.find_element(
+        By.XPATH, "//input[@id='userName']")
     full_name_text_box.send_keys(FULL_NAME)
 
     email_text_box = driver.find_element(By.XPATH, "//input[@id='userEmail']")
     email_text_box.send_keys(EMAIL)
 
-    current_address_text_box = driver.find_element(By.XPATH, "//textarea[@id='currentAddress']")
+    current_address_text_box = driver.find_element(
+        By.XPATH, "//textarea[@id='currentAddress']")
     current_address_text_box.send_keys(CURRENT_ADDRESS)
 
-    permanent_address_text_box = driver.find_element(By.XPATH, "//textarea[@id='permanentAddress']")
+    permanent_address_text_box = driver.find_element(
+        By.XPATH, "//textarea[@id='permanentAddress']")
     permanent_address_text_box.send_keys(PERMANENT_ADDRESS)
 
     submit_button = driver.find_element(By.XPATH, "//button[@id='submit']")
     submit_button.click()
-
 
     assert FULL_NAME in driver.find_element(
         By.XPATH, "//p[@id='name']").text, "Name not found in the output!"
@@ -57,3 +63,12 @@ def test_text_box(driver):
     assert PERMANENT_ADDRESS in driver.find_element(
         By.XPATH, "//p[@id='permanentAddress']").text, "Permanent address not found in the output!"
 
+
+def test_check_box(driver):
+    website_main_page(driver)
+    check_box_button = driver.find_element(
+        By.XPATH, "//span[normalize-space() = 'Check Box]")
+    check_box_button.click()
+    
+    parent_nodes = driver.find_elements(By.CSS_SELECTOR, "li.rct-node-parent")
+    print(parent_nodes)
