@@ -17,6 +17,7 @@ PERMANENT_ADDRESS = "Israel"
 def driver():
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service)
+    driver.set_window_size(1920, 1080)
     driver.implicitly_wait(10)
     driver.maximize_window()
     yield driver
@@ -25,11 +26,18 @@ def driver():
 
 def website_main_page(driver):
     driver.get("https://demoqa.com/")
-    element_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable(
-            (By.XPATH, "//div[@class='card-body']/h5[text()='Elements']"))
+
+    element_button = WebDriverWait(driver, 15).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, "//div[@class='card-body']/h5[text()='Elements']")
+        )
     )
+    scrollIntoView(driver, element_button)
     element_button.click()
+
+
+def scrollIntoView(driver, element):
+    return driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
 
 def test_text_box(driver):
@@ -66,6 +74,8 @@ def test_text_box(driver):
     submit_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//button[@id='submit']"))
     )
+
+    scrollIntoView(driver, submit_button)
     submit_button.click()
 
     assert FULL_NAME in WebDriverWait(driver, 10).until(
