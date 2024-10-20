@@ -99,41 +99,29 @@ def test_text_box(driver):
 def test_check_box(driver):
     website_main_page(driver)
 
-    # Click the "Check Box" button
     check_box_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable(
             (By.XPATH, "//span[normalize-space() = 'Check Box']"))
     )
     check_box_button.click()
 
-    # Expand all the checkboxes
     expand_all_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//button[@title='Expand all']"))
     )
     expand_all_button.click()
 
-    # Get the list of all checkboxes
-    boxs_list = WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located(
-            (By.XPATH, "//*[@class='rct-checkbox']"))
+    checkbox_labels = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//label[@for]"))
     )
 
-    for checkbox in boxs_list:
+    for label in checkbox_labels:
         try:
-            driver.execute_script(
-                "arguments[0].scrollIntoView(true);", checkbox)
-
-            WebDriverWait(driver, 10).until(EC.visibility_of(checkbox))
-
-            checkbox_input = checkbox.find_element(By.XPATH, ".//input")
-
-            if checkbox_input.is_selected():
-                print("Checkbox is already selected.")
-            else:
-                checkbox.click()
-
-                assert checkbox_input.is_selected(), "Checkbox was not selected!"
-
+            scrollIntoView(driver, label)
+            label.click()
+            checkbox_input = label.find_element(
+                By.XPATH, ".//preceding-sibling::input")
+            assert checkbox_input.is_selected(), f"Checkbox for {
+                label.text} was not selected!"
         except Exception as e:
             print(f"Could not interact with checkbox: {e}")
 
@@ -147,27 +135,38 @@ def test_radio_button(driver):
         EC.element_to_be_clickable(
             (By.XPATH, "//span[normalize-space()='Radio Button']"))
     )
+
     radio_button.click()
 
     yes_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//label[@for='yesRadio']"))
     )
+
+    scrollIntoView(driver, yes_button)
+
     yes_button.click()
 
     yes_radio_selected = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "//input[@id='yesRadio']"))
     )
+    
     assert yes_radio_selected.is_selected(), "Yes radio button was not selected!"
 
     impressive_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable(
             (By.XPATH, "//label[@for='impressiveRadio']"))
     )
+
+    scrollIntoView(driver, impressive_button)
+
     impressive_button.click()
 
     impressive_radio_selected = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located(
             (By.XPATH, "//input[@id='impressiveRadio']"))
     )
+    
     assert impressive_radio_selected.is_selected(
     ), "Impressive radio button was not selected!"
+
+
